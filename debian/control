@@ -1,0 +1,12 @@
+Source: ros-indigo-rocon-hub-client
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-catkin
+Homepage: http://ros.org/wiki/rocon_hub_client
+Standards-Version: 3.9.2
+
+Package: ros-indigo-rocon-hub-client
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-gateway-msgs, ros-indigo-rocon-gateway-utils, ros-indigo-rocon-python-redis, ros-indigo-rospy
+Description: Client api for discovery and connection to rocon hubs. It also has a few convenience api for manipulating data on the hub.
