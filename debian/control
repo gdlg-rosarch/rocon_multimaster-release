@@ -1,0 +1,12 @@
+Source: ros-indigo-rocon-unreliable-experiments
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-catkin, ros-indigo-roscpp, ros-indigo-std-msgs
+Homepage: http://ros.org/wiki/rocon_unreliable_experiments
+Standards-Version: 3.9.2
+
+Package: ros-indigo-rocon-unreliable-experiments
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-roscpp, ros-indigo-std-msgs
+Description: Some experiments testing roscpp unreliable transports.
