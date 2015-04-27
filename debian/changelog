@@ -1,0 +1,119 @@
+ros-indigo-rocon-hub (0.7.8-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 26 Apr 2015 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.7.7-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 22 Mar 2015 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.7.6-0trusty) trusty; urgency=high
+
+  * expose hidden param in the code
+  * Contributors: Jihoon Lee
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Thu, 20 Nov 2014 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.7.5-0trusty) trusty; urgency=high
+
+  * ttl returns -2 if key does not exist from redis 2.8
+  * Contributors: Jihoon Lee
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 22 Sep 2014 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.7.4-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 24 Aug 2014 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.7.3-0trusty) trusty; urgency=high
+
+  * support for redis on trusty, version 2.8.
+  * remove unused gateway_ping_frequency parameter, #271 <https://github.com/robotics-in-concert/rocon_multimaster/issues/271>.
+  * Contributors: Daniel Stonier
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 25 May 2014 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.7.1-0trusty) trusty; urgency=high
+
+  * Expose ``gateway_unavailable_timeout`` as a configurable parameter.
+  * Expose ``gateway_unavailable_timeout`` as an arg to roslaunch.
+  * Contributors: Daniel Stonier
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 05 May 2014 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.7.0-0trusty) trusty; urgency=high
+
+  * support for redis server v2.6
+  * update for recently moved modules to rocon_tools, also platform_tuples module refactoring.
+  * interpret time_since_last_seen as an int, not a float. #233 <https://github.com/robotics-in-concert/rocon_multimaster/issues/233>
+  * pep8
+  * bugfix wired alive ping status' on the hub, closes #224 <https://github.com/robotics-in-concert/rocon_multimaster/issues/224>
+  * gateway to hub pinger
+  * parameterise the external shutdown timeout.
+  * external shutdown hooks for gateway and hub.
+  * variable length split, so pull from the start, not the back, closes #211 <https://github.com/robotics-in-concert/rocon_multimaster/issues/211>
+  * better pretty printing in remote_gateway_info_script. update time_last_seen after the first failure as well
+  * graceful error handling for ping output parse failure. closes #185 <https://github.com/robotics-in-concert/rocon_multimaster/issues/185>
+  * connection statistics on the hub.
+  * reverting default gateway dropout time to 2 hours
+  * clean out old redis home directory when restarting the hub, closes #166 <https://github.com/robotics-in-concert/rocon_multimaster/issues/166>
+  * ensure that gateway_info is completely available before adding a ping to that machine. closes #198 <https://github.com/robotics-in-concert/rocon_multimaster/issues/198>
+  * first draft of the hub sidekick is complete. closes #182 <https://github.com/robotics-in-concert/rocon_multimaster/issues/182>. closes #183 <https://github.com/robotics-in-concert/rocon_multimaster/issues/183>
+  * using wallsleep clock instead of rospy.sleep. progress towards #191 <https://github.com/robotics-in-concert/rocon_multimaster/issues/191>
+  * Contributors: Daniel Stonier, Piyush Khandelwal
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Tue, 15 Apr 2014 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.5.0-0trusty) trusty; urgency=high
+
+  * direct and zeroconf hubs now resolving.
+  * trivial comment update.
+  * background hub discovery thread.
+  * use args instead of reproducing launcher content.
+  * uuid's now used to generate unique gateway names.
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 27 May 2013 02:03:00 -0000
+
+ros-indigo-rocon-hub (0.3.0-0trusty) trusty; urgency=high
+
+  * update jihoon e-mail
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 04 Feb 2013 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.2.2-0trusty) trusty; urgency=high
+
+  * fix wiki links.
+  * catkinized.
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Wed, 30 Jan 2013 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.1.8-0trusty) trusty; urgency=high
+
+  * some exception and license handling
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 23 Dec 2012 04:59:00 -0000
+
+ros-indigo-rocon-hub (0.1.6-0trusty) trusty; urgency=high
+
+  * avoid building, rosbuild takes ages now.
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Tue, 11 Dec 2012 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.1.4-0trusty) trusty; urgency=high
+
+  * generic default hub name.
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Fri, 07 Dec 2012 15:00:00 -0000
+
+ros-indigo-rocon-hub (0.1.3-0trusty) trusty; urgency=high
+
+  * rocon_gateway_hub->rocon_hub, client also.
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Thu, 06 Dec 2012 15:00:00 -0000
+
+
