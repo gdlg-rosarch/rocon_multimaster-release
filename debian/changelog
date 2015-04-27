@@ -1,0 +1,40 @@
+ros-indigo-rocon-gateway-utils (0.7.8-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 26 Apr 2015 15:00:00 -0000
+
+ros-indigo-rocon-gateway-utils (0.7.7-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 22 Mar 2015 15:00:00 -0000
+
+ros-indigo-rocon-gateway-utils (0.7.6-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Thu, 20 Nov 2014 15:00:00 -0000
+
+ros-indigo-rocon-gateway-utils (0.7.5-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 22 Sep 2014 15:00:00 -0000
+
+ros-indigo-rocon-gateway-utils (0.7.4-0trusty) trusty; urgency=high
+
+  * rocon_gateway_utils missing COMPONENTS keyword before 'rosunit rostest
+  * Contributors: Jihoon Lee
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 24 Aug 2014 15:00:00 -0000
+
+ros-indigo-rocon-gateway-utils (0.7.1-0trusty) trusty; urgency=high
+
+  * use rosservice instead of rosmaster for simpler gateway lookups
+  * more robust error recognition, classify betweeen no gateways vs multiple gateways
+  * Contributors: Daniel Stonier
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 05 May 2014 15:00:00 -0000
+
+
