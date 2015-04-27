@@ -1,0 +1,52 @@
+ros-indigo-rocon-unreliable-experiments (0.7.8-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 26 Apr 2015 15:00:00 -0000
+
+ros-indigo-rocon-unreliable-experiments (0.7.7-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 22 Mar 2015 15:00:00 -0000
+
+ros-indigo-rocon-unreliable-experiments (0.7.6-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Thu, 20 Nov 2014 15:00:00 -0000
+
+ros-indigo-rocon-unreliable-experiments (0.7.5-0trusty) trusty; urgency=high
+
+
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 22 Sep 2014 15:00:00 -0000
+
+ros-indigo-rocon-unreliable-experiments (0.7.4-0trusty) trusty; urgency=high
+
+  * build include path 'include' does not exist
+  * Contributors: Jihoon Lee
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Sun, 24 Aug 2014 15:00:00 -0000
+
+ros-indigo-rocon-unreliable-experiments (0.5.0-0trusty) trusty; urgency=high
+
+  * make sure our target names are unique.
+  * 0.4.0
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Mon, 27 May 2013 02:03:00 -0000
+
+ros-indigo-rocon-unreliable-experiments (0.2.2-0trusty) trusty; urgency=high
+
+  * fix wiki links.
+  * catkinized.
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Wed, 30 Jan 2013 15:00:00 -0000
+
+ros-indigo-rocon-unreliable-experiments (0.1.0-0trusty) trusty; urgency=high
+
+  * experiments moved out of graveyard.
+
+ -- Daniel Stonier <d.stonier@gmail.com>  Tue, 13 Nov 2012 15:00:00 -0000
+
+
