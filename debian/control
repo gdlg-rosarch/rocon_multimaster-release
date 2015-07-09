@@ -1,0 +1,12 @@
+Source: ros-indigo-rocon-test
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-catkin, ros-indigo-rostest
+Homepage: http://ros.org/wiki/rocon_test
+Standards-Version: 3.9.2
+
+Package: ros-indigo-rocon-test
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-rocon-console, ros-indigo-rocon-launch, ros-indigo-rocon-python-utils, ros-indigo-roslaunch, ros-indigo-rospy, ros-indigo-rostest, ros-indigo-rosunit
+Description: Rocon test framework (i.e. multi-launch rostest framework).
