@@ -42,7 +42,7 @@ class HubConnection(redis.Connection):
 ##############################################################################
 
 
-def ping_hub(ip, port):
+def ping_hub(ip, port, timeout = 5.0):
     '''
       Pings the hub for identification. This is currently used
       by the hub discovery module.
@@ -51,15 +51,14 @@ def ping_hub(ip, port):
     '''
     try:
         connection_pool = redis.ConnectionPool(host=ip, port=port,
-                                               connection_class=HubConnection)
-        r = redis.Redis(connection_pool=connection_pool, socket_timeout=0.2)
+                                               connection_class=HubConnection, socket_timeout=timeout)
+        r = redis.Redis(connection_pool=connection_pool)
         name = r.get("rocon:hub:name")
-
-    except redis.exceptions.ConnectionError:
-        return False
+    except redis.exceptions.ConnectionError as e:
+        return False, str(e)
     if name is None:  # returns None if the server was there, but the key was not found.
-        return False
-    return True
+        return False, "Redis Server is there but name key is not found"
+    return True, ""
 
 ##############################################################################
 # Hub
@@ -90,18 +89,27 @@ class Hub(object):
         # but that will need modification of the way we handle the RedisListenerThread in
         # gateway_hub.py
         try:
-            unused_ping = redis.Redis(host=ip, socket_timeout=0.5, port=port).ping()
+            unused_ping = redis.Redis(host=ip, socket_timeout=5.0, port=port).ping()
             # should check ping result? Typically it just throws the timeout error
         except redis.exceptions.ConnectionError:
             self._redis_server = None
             raise HubNotFoundError("couldn't connect to the redis server")
         try:
-            self.pool = redis.ConnectionPool(host=ip, port=port, db=0)
+            self.pool = redis.ConnectionPool(host=ip, port=port, db=0, socket_timeout=5.0)
             self._redis_server = redis.Redis(connection_pool=self.pool)
             self._redis_pubsub_server = self._redis_server.pubsub()
             hub_key_name = self._redis_server.get("rocon:hub:name")
             # Be careful, hub_name is None, it means the redis server is
             # found but hub_name not yet set or not set at all.
+
+            # retrying for 5 seconds in case we started too fast
+            retries = 0
+            while self._redis_server and not hub_key_name and retries < 5:
+                rospy.logwarn("couldn't resolve hub name on the redis server [%s:%s]. Retrying..." % (ip, port))
+                retries += 1
+                rospy.rostime.wallsleep(1.0)
+                hub_key_name = self._redis_server.get("rocon:hub:name")
+
             if not hub_key_name:
                 self._redis_server = None
                 raise HubNameNotFoundError("couldn't resolve hub name on the redis server [%s:%s]" % (ip, port))
