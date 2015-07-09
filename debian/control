@@ -1,0 +1,12 @@
+Source: ros-indigo-rocon-hub
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-catkin
+Homepage: http://ros.org/wiki/rocon_hub
+Standards-Version: 3.9.2
+
+Package: ros-indigo-rocon-hub
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, avahi-daemon, avahi-utils, redis-server, ros-indigo-rocon-console, ros-indigo-rocon-gateway, ros-indigo-rocon-python-comms, ros-indigo-rocon-python-redis, ros-indigo-rocon-semantic-version, ros-indigo-rosgraph, ros-indigo-std-srvs
+Description: A hub acts as a shared key-value store for multiple ros systems (primarily used by gateways).
