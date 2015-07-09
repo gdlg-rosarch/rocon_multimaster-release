@@ -143,7 +143,7 @@ class Gateway(object):
                         break
 
         new_flips, lost_flips = self.flipped_interface.update(
-            local_connection_index, remote_gateway_hub_index, self._unique_name)
+            local_connection_index, remote_gateway_hub_index, self._unique_name, self.master)
         for connection_type in utils.connection_types:
             for flip in new_flips[connection_type]:
                 firewall_flag = self.hub_manager.get_remote_gateway_firewall_flag(flip.gateway)
@@ -163,16 +163,18 @@ class Gateway(object):
                 else:
                     for connection in connections:
                         rospy.loginfo("Gateway : sending flip request [%s]%s" %
-                                      (flip.gateway, utils.format_rule(connection.rule)))
+                                      (flip.gateway, utils.format_rule(flip.rule)))
                         hub = remote_gateway_hub_index[flip.gateway][0]
                         hub.send_flip_request(flip.gateway, connection)
                         hub.post_flip_details(
-                            flip.gateway, connection.rule.name, connection.rule.type, connection.rule.node)
+                            flip.gateway, flip.rule.name, flip.rule.type, flip.rule.node)
             for flip in lost_flips[connection_type]:
                 state_changed = True
                 rospy.loginfo("Gateway : sending unflip request [%s]%s" % (flip.gateway, utils.format_rule(flip.rule)))
                 for hub in remote_gateway_hub_index[flip.gateway]:
-                    if hub.send_unflip_request(flip.gateway, flip.rule):
+                    rule = copy.deepcopy(flip.rule)
+                    rule.node = rule.node.split(",")[0] # strip out xmlrpc uri to send unflip request
+                    if hub.send_unflip_request(flip.gateway, rule):
                         # This hub was used to send the original flip request
                         hub.remove_flip_details(flip.gateway, flip.rule.name, flip.rule.type, flip.rule.node)
                         break
@@ -181,6 +183,8 @@ class Gateway(object):
         flipped_connections = self.flipped_interface.get_flipped_connections()
         for flip in flipped_connections:
             for hub in remote_gateway_hub_index[flip.remote_rule.gateway]:
+                rule = copy.deepcopy(flip.remote_rule)
+                rule.rule.node = rule.rule.node.split(",")[0]
                 status = hub.get_flip_request_status(flip.remote_rule)
                 if status is not None:
                     flip_state_changed = self.flipped_interface.update_flip_status(flip.remote_rule, status)
@@ -319,7 +323,6 @@ class Gateway(object):
             for hub_uri, hub in hubs.iteritems():
                 if hub_uri in update_flip_status:
                     hub.update_multiple_flip_request_status(update_flip_status[hub_uri])
-
             return
 
         state_changed = False
@@ -495,40 +498,26 @@ class Gateway(object):
           @return service response
           @rtype gateway_srvs.RemoteResponse
         '''
-        response = gateway_srvs.RemoteResponse()
         # could move this below and if any are fails, just abort adding the rules.
-        for remote in request.remotes:
-            remote.gateway, response.result, response.error_message = self._ros_service_remote_checks(remote.gateway)
-            if response.result != gateway_msgs.ErrorCodes.SUCCESS:
-                rospy.logerr("Gateway : %s." % response.error_message)
-                return response
-        # result is currently SUCCESS
-        added_rules = []
-        for remote in request.remotes:
-            if not request.cancel:
-                flip_rule = self.flipped_interface.add_rule(remote)
-                if flip_rule:
-                    added_rules.append(flip_rule)
-                    rospy.loginfo("Gateway : added flip rule [%s:(%s,%s)]" %
-                                  (flip_rule.gateway, flip_rule.rule.name, flip_rule.rule.type))
-                else:
-                    response.result = gateway_msgs.ErrorCodes.FLIP_RULE_ALREADY_EXISTS
-                    response.error_message = "flip rule already exists [%s:(%s,%s)]" % (
-                        remote.gateway, remote.rule.name, remote.rule.type)
-                    break
-            else:  # request.cancel
-                removed_flip_rules = self.flipped_interface.remove_rule(remote)
-                if removed_flip_rules:
-                    rospy.loginfo("Gateway : removed flip rule [%s:(%s,%s)]" %
-                                  (remote.gateway, remote.rule.name, remote.rule.type))
+        # Check if the target remote gateway is valid.
+        response = self._check_remote_gateways(request.remotes)
+        if response:
+            return response
 
+        response = gateway_srvs.RemoteResponse(gateway_msgs.ErrorCodes.SUCCESS, "")
+
+        # result is currently SUCCESS
+        # Process all add/remove flip requests
+        if not request.cancel: # Rule add request
+            response = self._add_flip_rules(request.remotes)
+        else: # Rule remove request
+            response = self._remove_flip_rules(request.remotes)
+
+        # Post processing
         if response.result == gateway_msgs.ErrorCodes.SUCCESS:
             self._publish_gateway_info()
             self.watcher_thread.trigger_update = True
         else:
-            if added_rules:  # completely abort any added rules
-                for added_rule in added_rules:
-                    self.flipped_interface.remove_rule(added_rule)
             rospy.logerr("Gateway : %s." % response.error_message)
         return response
 
@@ -572,13 +561,13 @@ class Gateway(object):
           @return service response
           @rtype gateway_srvs.RemoteResponse
         '''
-        response = gateway_srvs.RemoteResponse()
         # could move this below and if any are fails, just abort adding the rules.
-        for remote in request.remotes:
-            remote.gateway, response.result, response.error_message = self._ros_service_remote_checks(remote.gateway)
-            if response.result != gateway_msgs.ErrorCodes.SUCCESS:
-                rospy.logerr("Gateway : %s." % response.error_message)
-                return response
+        # Check if the target remote gateway is valid.
+        response = self._check_remote_gateways(request.remotes)
+        if response:
+            return response
+
+        response = gateway_srvs.RemoteResponse(gateway_msgs.ErrorCodes.SUCCESS, "")
 
         # result is currently SUCCESS
         added_rules = []
@@ -670,3 +659,67 @@ class Gateway(object):
 # Not visible
 # return None, gateway_msgs.ErrorCodes.REMOTE_GATEWAY_NOT_VISIBLE, "remote
 # gateway is currently not visible on the hubs [%s]" % gateway
+
+    def _check_remote_gateways(self, remotes):
+        """
+          Check given gateways in remote rules are valid
+
+          :param remotes: remote rules
+          :type remotes: gateway_msgs.RemoteRule[]
+
+          :return: whether it is valid, error message if it failes
+          :rtypes: None or gateway_srvs.RemoteResponse
+        """
+        response = gateway_srvs.RemoteResponse()
+        for remote in remotes:
+            remote.gateway, response.result, response.error_message = self._ros_service_remote_checks(remote.gateway)
+            if response.result != gateway_msgs.ErrorCodes.SUCCESS:
+                rospy.logerr("Gateway : %s." % response.error_message)
+                return response
+        return None
+
+    def _add_flip_rules(self, remotes):
+        """
+          Add given rules into watcher list
+
+          :param remotes: remote rules
+          :type remotes: gateway_msgs.RemoteRule[]
+          :return: whether it is successful
+          :rtypes: gateway_srvs.RemoteResponse
+        """
+        response = gateway_srvs.RemoteResponse()
+        response.result = gateway_msgs.ErrorCodes.SUCCESS
+
+        added_rules = []
+        for remote in remotes:
+            flip_rule = self.flipped_interface.add_rule(remote)
+            if flip_rule:
+                added_rules.append(flip_rule)
+                rospy.loginfo("Gateway : added flip rule [%s:(%s,%s)]" % (flip_rule.gateway, flip_rule.rule.name, flip_rule.rule.type))
+            else:
+                response.result = gateway_msgs.ErrorCodes.FLIP_RULE_ALREADY_EXISTS
+                response.error_message = "flip rule already exists [%s:(%s,%s)]" % (remote.gateway, remote.rule.name, remote.rule.type)
+
+        if response.result != gateway_msgs.ErrorCodes.SUCCESS:
+            # completely abort any added rules
+            for added_rule in added_rules:
+                self.flipped_interface.remove_rule(added_rule)
+        return response
+
+    def _remove_flip_rules(self, remotes):
+        """
+          remove given rules into watcher list
+
+          :param remotes: remote rules
+          :type remotes: gateway_msgs.RemoteRule[]
+          :return: whether it is successful
+          :rtypes: gateway_srvs.RemoteResponse
+        """
+        response = gateway_srvs.RemoteResponse()
+        response.result = gateway_msgs.ErrorCodes.SUCCESS
+
+        for remote in remotes:
+            removed_flip_rules = self.flipped_interface.remove_rule(remote)
+            if removed_flip_rules:
+                rospy.loginfo("Gateway : removed flip rule [%s:(%s,%s)]" % (remote.gateway, remote.rule.name, remote.rule.type))
+        return response
