@@ -1,0 +1,12 @@
+Source: ros-kinetic-rocon-hub
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kinetic-catkin
+Homepage: http://ros.org/wiki/rocon_hub
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-rocon-hub
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, avahi-daemon, avahi-utils, redis-server, ros-kinetic-rocon-console, ros-kinetic-rocon-gateway, ros-kinetic-rocon-python-comms, ros-kinetic-rocon-python-redis, ros-kinetic-rocon-semantic-version, ros-kinetic-rosgraph, ros-kinetic-std-srvs
+Description: A hub acts as a shared key-value store for multiple ros systems (primarily used by gateways).
