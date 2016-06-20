@@ -1,0 +1,12 @@
+Source: ros-kinetic-rocon-unreliable-experiments
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kinetic-catkin, ros-kinetic-roscpp, ros-kinetic-std-msgs
+Homepage: http://ros.org/wiki/rocon_unreliable_experiments
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-rocon-unreliable-experiments
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kinetic-roscpp, ros-kinetic-std-msgs
+Description: Some experiments testing roscpp unreliable transports.
