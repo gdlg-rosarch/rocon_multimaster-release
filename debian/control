@@ -1,0 +1,13 @@
+Source: ros-kinetic-rocon-test
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kinetic-catkin, ros-kinetic-rostest
+Homepage: http://ros.org/wiki/rocon_test
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-rocon-test
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kinetic-rocon-console, ros-kinetic-rocon-launch, ros-kinetic-rocon-python-utils, ros-kinetic-roslaunch, ros-kinetic-rospy, ros-kinetic-rostest, ros-kinetic-rosunit
+Description: Rocon test framework (i.e.
+ multi-launch rostest framework).
