@@ -1,0 +1,12 @@
+Source: ros-kinetic-rocon-gateway-tests
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-gateway-msgs, ros-indigo-rocon-console, ros-indigo-rocon-gateway, ros-indigo-rocon-gateway-utils, ros-indigo-rocon-hub, ros-indigo-rocon-test, ros-kinetic-actionlib-tutorials, ros-kinetic-catkin, ros-kinetic-roscpp-tutorials, ros-kinetic-rospy, ros-kinetic-rospy-tutorials, ros-kinetic-rosunit, ros-kinetic-zeroconf-avahi
+Homepage: http://ros.org/wiki/rocon_gateway_tests
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-rocon-gateway-tests
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, 
+Description: Testing programs for gateways.
