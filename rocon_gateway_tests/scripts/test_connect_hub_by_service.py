@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-#       
+#
 # License: BSD
-#   https://raw.github.com/robotics-in-concert/rocon_multimaster/hydro-devel/rocon_gateway_tests/LICENSE 
+#   https://raw.github.com/robotics-in-concert/rocon_multimaster/hydro-devel/rocon_gateway_tests/LICENSE
 #
 ##############################################################################
 # Imports
@@ -28,9 +28,12 @@ class TestConnectHubByService(unittest.TestCase):
         print("\n********************************************************************")
         print("* Sending Connect Hub Request")
         print("********************************************************************")
+        print("Some time for everything to fire up (gateway, hub)")
+        rospy.sleep(3.0)
+        print("Requesting connection to hub")
         result, unused_error_message = samples.connect_hub_by_service(raise_exception=False)
         self.assertEquals(gateway_msgs.ErrorCodes.SUCCESS, result)
-        
+
     def tearDown(self):
         pass
 

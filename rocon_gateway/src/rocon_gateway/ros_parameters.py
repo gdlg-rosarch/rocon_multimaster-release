@@ -4,8 +4,10 @@
 #   https://raw.github.com/robotics-in-concert/rocon_multimaster/license/LICENSE
 #
 
+import os.path
 import re
 
+import rosparam
 import rospy
 from gateway_msgs.msg import Rule, RemoteRule
 
@@ -22,6 +24,27 @@ def setup_ros_parameters():
     Most of these should be fairly self explanatory.
     '''
     param = {}
+
+    # Check if there is a user provided custom configuration
+    try:
+        custom_configuration_file = rospy.get_param('~custom_rules_file')
+        if custom_configuration_file:
+            if os.path.isfile(custom_configuration_file):
+                loaded_parameters = rosparam.load_file(custom_configuration_file, default_namespace=rospy.resolve_name(rospy.get_name()))  # this sets the private namespace
+                for params, ns in loaded_parameters:
+                    # need to merge whatever default rules are already on the param server with these settings
+                    existing_parameters = rosparam.get_param(ns)
+                    for p, v in params.iteritems():
+                        if p in ['default_flips', 'default_advertisements', 'default_pulls'] and p in existing_parameters:
+                            existing_parameters[p] += v
+                        else:
+                            existing_parameters[p] = v
+                    rosparam.upload_params(ns, existing_parameters, verbose=True)
+            else:
+                rospy.logwarn("Gateway : user provided configuration file could not be found [%s]" % custom_configuration_file)
+    except KeyError:
+        # Not an error, just no need to load a custom configuration
+        pass
 
     # Hub
     param['hub_uri'] = rospy.get_param('~hub_uri', '')
@@ -58,12 +81,6 @@ def setup_ros_parameters():
 
     # Network interface name (to be used when there are multiple active interfaces))
     param['network_interface'] = rospy.get_param('~network_interface', '')  # string
-
-    # Let an external party (e.g. concert conductor) manually shutdown the gateway
-    # so we can have control over when flips and pulls get deregistered (lets us do last
-    # minute service calls across masters before our own master goes down)
-    param['external_shutdown'] = rospy.get_param('~external_shutdown', False)
-    param['external_shutdown_timeout'] = rospy.get_param('~external_shutdown_timeout', 15)  # seconds
 
     return param
 
