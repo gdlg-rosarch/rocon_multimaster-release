@@ -1,0 +1,12 @@
+Source: ros-kinetic-rocon-gateway
+Section: misc
+Priority: extra
+Maintainer: Daniel Stonier <d.stonier@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kinetic-catkin, ros-kinetic-roslint
+Homepage: http://ros.org/wiki/rocon_gateway
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-rocon-gateway
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-crypto, ros-indigo-gateway-msgs, ros-indigo-rocon-console, ros-indigo-rocon-gateway-utils, ros-indigo-rocon-hub-client, ros-indigo-rocon-python-comms, ros-indigo-rocon-python-redis, ros-indigo-rocon-python-utils, ros-indigo-rocon-python-wifi, ros-kinetic-rosgraph, ros-kinetic-roslib, ros-kinetic-rosparam, ros-kinetic-rospy, ros-kinetic-rosservice, ros-kinetic-rostopic, ros-kinetic-std-srvs, ros-kinetic-zeroconf-avahi, ros-kinetic-zeroconf-msgs
+Description: A hub acts as a shared key-value store for multiple ros systems (primarily used by gateways).
