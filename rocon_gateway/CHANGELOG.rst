@@ -1,8 +1,14 @@
 Changelog
 =========
 
-0.7.10 (2015-07-09)
--------------------
+0.8.1 (2016-06-17)
+------------------
+* handle flip problems when connections go down
+
+0.8.0 (2015-10-10)
+------------------
+* many gateway connection bugfixes
+* gateway tests again functional 
 
 0.7.9 (2015-07-09)
 ------------------
