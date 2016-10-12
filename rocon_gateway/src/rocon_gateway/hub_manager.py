@@ -23,10 +23,6 @@ from . import utils
 
 
 class HubManager(object):
-    """
-    :ivar hubs: list of gateway hub instances
-    :vartype hubs: [rocon_gateway.GatewayHub]
-    """
 
     ##########################################################################
     # Init & Shutdown
@@ -38,6 +34,10 @@ class HubManager(object):
         self._param['hub_blacklist'] = hub_blacklist
         self.hubs = []
         self._hub_lock = threading.Lock()
+
+    def shutdown(self):
+        for hub in self.hubs:
+            hub.unregister_gateway()
 
     def is_connected(self):
         return True if self.hubs else False
@@ -172,7 +172,8 @@ class HubManager(object):
     ##########################################################################
 
     def connect_to_hub(self,
-                       new_hub,
+                       ip,
+                       port,
                        firewall_flag,
                        gateway_unique_name,
                        gateway_disengage_hub,  # hub connection lost hook
@@ -200,8 +201,19 @@ class HubManager(object):
 
           @raise
         '''
-        self._hub_lock.acquire()
         try:
+            new_hub = gateway_hub.GatewayHub(ip, port, self._param['hub_whitelist'], self._param['hub_blacklist'])
+        except rocon_hub_client.HubError as e:
+            return None, e.id, str(e)
+        already_exists_error = False
+        self._hub_lock.acquire()
+        for hub in self.hubs:
+            if hub == new_hub:
+                already_exists_error = True
+                break
+        self._hub_lock.release()
+        if not already_exists_error:
+            self._hub_lock.acquire()
             new_hub.register_gateway(firewall_flag,
                                      gateway_unique_name,
                                      gateway_disengage_hub,  # hub connection lost hook
@@ -210,42 +222,11 @@ class HubManager(object):
             for connection_type in utils.connection_types:
                 for advertisement in existing_advertisements[connection_type]:
                     new_hub.advertise(advertisement)
-
-            # forcefully replace obsolete hub if needed
-            if new_hub in self.hubs:
-                self.hubs.remove(new_hub)
-
             self.hubs.append(new_hub)
-        except rocon_hub_client.HubError as e:
-            return None, e.id, str(e)
-        finally:
             self._hub_lock.release()
-        return new_hub, gateway_msgs.ErrorCodes.SUCCESS, "success"
-
-    def is_connected_to_hub(self, ip, port):
-        '''
-          Check if the gateway is properly connected to the hub.
-        '''
-        hub = None
-        # Retrieve existing hub from set
-        for h in self.hubs:
-            if h.ip == ip and h.port == port:
-                hub = h
-                break
-
-        if not hub:  # if needed we create a new one
-            try:
-                hub = gateway_hub.GatewayHub(ip, port, self._param['hub_whitelist'], self._param['hub_blacklist'])
-            except rocon_hub_client.HubError as e:
-                return None, e.id, str(e)
-
-        self._hub_lock.acquire()
-        registered = hub.is_gateway_registered()
-        self._hub_lock.release()
-        if registered:
-            return hub, gateway_msgs.ErrorCodes.HUB_CONNECTION_ALREADY_EXISTS, "already connected to this hub"
+            return new_hub, gateway_msgs.ErrorCodes.SUCCESS, "success"
         else:
-            return hub, gateway_msgs.ErrorCodes.NO_HUB_CONNECTION, "not connected to this hub"
+            return None, gateway_msgs.ErrorCodes.HUB_CONNECTION_ALREADY_EXISTS, "already connected to this hub"
 
     def disengage_hub(self, hub_to_be_disengaged):
         '''
@@ -254,7 +235,7 @@ class HubManager(object):
 
           @param hub_to_be_disengaged
         '''
-        # uri = str(ip) + ":" + str(port)
+        #uri = str(ip) + ":" + str(port)
         # Could dig in and find the name here, but not worth the bother.
         hub_to_be_disengaged.disconnect()  # necessary to kill failing socket receives
         self._hub_lock.acquire()

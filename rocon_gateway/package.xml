@@ -1,6 +1,6 @@
 <package>
   <name>rocon_gateway</name>
-  <version>0.8.1</version>
+  <version>0.7.10</version>
   <description>
     A hub acts as a shared key-value store for multiple ros 
     systems (primarily used by gateways).
@@ -31,7 +31,6 @@
   <run_depend>rocon_python_utils</run_depend>
   <run_depend>rocon_python_wifi</run_depend>
   <run_depend>roslib</run_depend>
-  <run_depend>rosparam</run_depend>
   <run_depend>rostopic</run_depend>
   <run_depend>rosservice</run_depend>
   <run_depend>rosgraph</run_depend>
