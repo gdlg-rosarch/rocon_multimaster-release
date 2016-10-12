@@ -79,7 +79,7 @@ tracks:
     last_version: 0.8.1
     name: rocon_multimaster
     patches: null
-    release_inc: '1'
+    release_inc: '2'
     release_repo_url: https://github.com/yujinrobot-release/rocon_multimaster-release.git
     release_tag: :{version}
     ros_distro: kinetic
