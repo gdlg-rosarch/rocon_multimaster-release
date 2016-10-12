@@ -46,10 +46,12 @@ tracks:
       --replace
     - git-bloom-generate -y rosrelease :{ros_distro} --source upstream -i :{release_inc}
     - git-bloom-generate -y rosdebian --prefix release/:{ros_distro} :{ros_distro}
-      -i :{release_inc}
+      -i :{release_inc} --os-name ubuntu
+    - git-bloom-generate -y rosdebian --prefix release/:{ros_distro} :{ros_distro}
+      -i :{release_inc} --os-name debian --os-not-required
     - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
       :{release_inc}
-    devel_branch: indigo
+    devel_branch: release/0.7-indigo
     last_version: 0.7.10
     name: rocon_multimaster
     patches: null
